@@ -767,37 +767,8 @@
 
     <!-- Upcoming events (always visible) -->
     <p class="event-list-title">Upcoming Events</p>
-    <div class="event-list">
-      <div class="event-item">
-        <div class="event-date-badge">
-          <div class="event-date-day">18</div>
-          <div class="event-date-month">Jun</div>
-        </div>
-        <div class="event-info">
-          <div class="event-name">General Assembly</div>
-          <div class="event-time">4:00 PM · Room 204</div>
-        </div>
-      </div>
-      <div class="event-item">
-        <div class="event-date-badge">
-          <div class="event-date-day">24</div>
-          <div class="event-date-month">Jun</div>
-        </div>
-        <div class="event-info">
-          <div class="event-name">End-of-Year Showcase</div>
-          <div class="event-time">6:00 PM · Main Hall</div>
-        </div>
-      </div>
-      <div class="event-item">
-        <div class="event-date-badge">
-          <div class="event-date-day">5</div>
-          <div class="event-date-month">Jul</div>
-        </div>
-        <div class="event-info">
-          <div class="event-name">Summer Welcome Social</div>
-          <div class="event-time">3:00 PM · Courtyard</div>
-        </div>
-      </div>
+    <div class="event-list" id="eventList">
+      <p style="color:var(--muted); font-size:0.85rem;">Loading events…</p>
     </div>
   </section>
 
@@ -856,8 +827,12 @@
       }
     }
 
-    // ── Idea form ──
-    async function submitIdea() {
+    // ── Idea form (submits silently to Google Forms) ──
+    const GFORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSdox60DkfpgtMBCId1lEGoKmLqCtQmX8y5FBRIx3mjx2JCUzQ/formResponse';
+    const GFORM_NAME_FIELD = 'entry.403913887';
+    const GFORM_IDEA_FIELD = 'entry.1047195282';
+
+    function submitIdea() {
       const name = document.getElementById('fieldName').value.trim();
       const idea = document.getElementById('fieldIdea').value.trim();
 
@@ -870,40 +845,220 @@
       btn.textContent = 'Sending…';
       btn.disabled = true;
 
-      try {
-        const res = await fetch('https://formspree.io/f/mgobdjgo', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({ name, idea })
-        });
-
-        if (res.ok) {
-          document.getElementById('ideaForm').style.display = 'none';
-          document.getElementById('successMsg').classList.add('show');
-        } else {
-          alert('Something went wrong. Please try again.');
-          btn.textContent = 'Submit idea →';
-          btn.disabled = false;
-        }
-      } catch (e) {
-        alert('No internet connection. Please try again.');
-        btn.textContent = 'Submit idea →';
-        btn.disabled = false;
+      const iframeName = 'hiddenIdeaFrame';
+      let iframe = document.getElementById(iframeName);
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.name = iframeName;
+        iframe.id = iframeName;
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
       }
+
+      const form = document.createElement('form');
+      form.action = GFORM_ACTION;
+      form.method = 'POST';
+      form.target = iframeName;
+
+      const nameInput = document.createElement('input');
+      nameInput.type = 'hidden';
+      nameInput.name = GFORM_NAME_FIELD;
+      nameInput.value = name;
+      form.appendChild(nameInput);
+
+      const ideaInput = document.createElement('input');
+      ideaInput.type = 'hidden';
+      ideaInput.name = GFORM_IDEA_FIELD;
+      ideaInput.value = idea;
+      form.appendChild(ideaInput);
+
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
+
+      setTimeout(() => {
+        document.getElementById('ideaForm').style.display = 'none';
+        document.getElementById('successMsg').classList.add('show');
+      }, 600);
     }
 
-    // ── Calendar ──
+    // ── Calendar (live-synced with Google Calendar) ──
     const CAL_START = { year: 2026, month: 7 }; // August 2026 (0-indexed)
     const CAL_END   = { year: 2027, month: 5 }; // June 2027
     let calCurrent  = { year: 2026, month: 7 };
     let selectedDay = null;
 
-    // Events keyed as "YYYY-M-D" (month 0-indexed)
-    const EVENTS = {
-      '2026-7-18':  [{ name: 'General Assembly',      time: '4:00 PM · Room 204' }],
-      '2026-7-24':  [{ name: 'End-of-Year Showcase',  time: '6:00 PM · Main Hall' }],
-      '2026-8-5':   [{ name: 'Summer Welcome Social', time: '3:00 PM · Courtyard' }],
-    };
+    // Events keyed as "YYYY-M-D" (month 0-indexed), populated from Google Calendar
+    let EVENTS = {};
+    let EVENTS_LOADED = false;
+
+    // The website calls our own serverless function (netlify/functions/get-events.js),
+    // which fetches the Google Calendar feed server-side — no CORS issues at all.
+    const EVENTS_ENDPOINT = '/.netlify/functions/get-events';
+
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function formatTime12h(hh, mm) {
+      const h = typeof hh === 'number' ? hh : parseInt(hh, 10);
+      const period = h >= 12 ? 'PM' : 'AM';
+      let h12 = h % 12;
+      if (h12 === 0) h12 = 12;
+      return `${h12}:${mm} ${period}`;
+    }
+
+    // Minimal ICS parser: extracts SUMMARY, DTSTART, LOCATION from VEVENT blocks
+    function parseICS(text) {
+      const unfolded = text.replace(/\r\n[ \t]/g, '');
+      const lines = unfolded.split(/\r?\n/);
+      const events = [];
+      let cur = null;
+
+      lines.forEach(line => {
+        if (line === 'BEGIN:VEVENT') { cur = {}; return; }
+        if (line === 'END:VEVENT') { if (cur) events.push(cur); cur = null; return; }
+        if (!cur) return;
+
+        const idx = line.indexOf(':');
+        if (idx === -1) return;
+        const rawKey = line.slice(0, idx);
+        const value  = line.slice(idx + 1);
+        const key    = rawKey.split(';')[0];
+
+        if (key === 'SUMMARY') cur.summary = value.replace(/\\,/g, ',').replace(/\\n/g, ' ');
+        if (key === 'LOCATION') cur.location = value.replace(/\\,/g, ',').replace(/\\n/g, ' ');
+        if (key === 'DTSTART') {
+          cur.allDay = /^\d{8}$/.test(value);
+          cur.dtstartRaw = value;
+        }
+      });
+
+      return events;
+    }
+
+    function buildEventsFromICS(rawEvents) {
+      const map = {};
+      rawEvents.forEach(ev => {
+        if (!ev.dtstartRaw || !ev.summary) return;
+        const m = ev.dtstartRaw.match(/^(\d{4})(\d{2})(\d{2})(T(\d{2})(\d{2})(\d{2})?(Z)?)?/);
+        if (!m) return;
+
+        let year, month, day, time, sortMin;
+
+        if (m[4]) {
+          // Timed event — DTSTART may be UTC (trailing Z) or a local floating time.
+          const isUTC = !!m[8];
+          let dateObj;
+          if (isUTC) {
+            dateObj = new Date(Date.UTC(
+              parseInt(m[1],10), parseInt(m[2],10) - 1, parseInt(m[3],10),
+              parseInt(m[5],10), parseInt(m[6],10), m[7] ? parseInt(m[7],10) : 0
+            ));
+          } else {
+            dateObj = new Date(
+              parseInt(m[1],10), parseInt(m[2],10) - 1, parseInt(m[3],10),
+              parseInt(m[5],10), parseInt(m[6],10), m[7] ? parseInt(m[7],10) : 0
+            );
+          }
+          year  = dateObj.getFullYear();
+          month = dateObj.getMonth();
+          day   = dateObj.getDate();
+          time  = formatTime12h(dateObj.getHours(), pad(dateObj.getMinutes()));
+          sortMin = dateObj.getHours() * 60 + dateObj.getMinutes();
+        } else {
+          // All-day event — no time component, no timezone conversion needed.
+          year  = parseInt(m[1], 10);
+          month = parseInt(m[2], 10) - 1;
+          day   = parseInt(m[3], 10);
+          time  = 'All day';
+          sortMin = -1;
+        }
+
+        const key = calKey(year, month, day);
+        const timeStr = ev.location ? `${time} · ${ev.location}` : time;
+
+        if (!map[key]) map[key] = [];
+        map[key].push({ name: ev.summary, time: timeStr, _sortYear: year, _sortMonth: month, _sortDay: day, _sortMin: sortMin });
+      });
+      return map;
+    }
+
+    function renderUpcomingEvents() {
+      const listEl = document.getElementById('eventList');
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      const flat = [];
+      Object.keys(EVENTS).forEach(key => {
+        EVENTS[key].forEach(e => {
+          const d = new Date(e._sortYear, e._sortMonth, e._sortDay);
+          if (d >= today) flat.push(e);
+        });
+      });
+
+      flat.sort((a,b) => {
+        const da = new Date(a._sortYear, a._sortMonth, a._sortDay);
+        const db = new Date(b._sortYear, b._sortMonth, b._sortDay);
+        if (da - db !== 0) return da - db;
+        return a._sortMin - b._sortMin;
+      });
+
+      const upcoming = flat.slice(0, 8);
+
+      if (upcoming.length === 0) {
+        listEl.innerHTML = '<p style="color:var(--muted); font-size:0.85rem;">No upcoming events.</p>';
+        return;
+      }
+
+      listEl.innerHTML = upcoming.map(e => `
+        <div class="event-item">
+          <div class="event-date-badge">
+            <div class="event-date-day">${e._sortDay}</div>
+            <div class="event-date-month">${MONTH_NAMES[e._sortMonth].slice(0,3)}</div>
+          </div>
+          <div class="event-info">
+            <div class="event-name">${e.name}</div>
+            <div class="event-time">${e.time}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function loadEventsFromGoogleCalendar() {
+      let text = null;
+      let lastErr = null;
+
+      try {
+        const res = await fetch(EVENTS_ENDPOINT);
+        if (!res.ok) throw new Error('Fetch failed with status ' + res.status);
+        const candidate = await res.text();
+        if (candidate && candidate.includes('BEGIN:VCALENDAR')) {
+          text = candidate;
+        } else {
+          throw new Error('Response did not contain calendar data');
+        }
+      } catch (err) {
+        lastErr = err;
+      }
+
+      if (text) {
+        try {
+          const rawEvents = parseICS(text);
+          EVENTS = buildEventsFromICS(rawEvents);
+        } catch (err) {
+          console.error('Could not parse calendar data:', err);
+          EVENTS = {};
+        }
+      } else {
+        console.error('Could not load Google Calendar events:', lastErr);
+        EVENTS = {};
+        const listEl = document.getElementById('eventList');
+        if (listEl) listEl.innerHTML = '<p style="color:var(--muted); font-size:0.85rem;">Couldn\'t load events right now. Please refresh in a moment.</p>';
+      }
+
+      EVENTS_LOADED = true;
+      buildCalendar();
+      renderUpcomingEvents();
+    }
 
     const MONTH_NAMES = ['January','February','March','April','May','June',
                          'July','August','September','October','November','December'];
@@ -1030,7 +1185,7 @@
       buildCalendar();
     }
 
-    buildCalendar();
+    loadEventsFromGoogleCalendar();
   </script>
 </body>
 </html>
