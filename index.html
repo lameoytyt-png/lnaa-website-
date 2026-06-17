@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LNAA Student Association</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f0f;
+      --surface: rgba(255,255,255,0.06);
+      --surface-hover: rgba(255,255,255,0.12);
+      --border: rgba(255,255,255,0.18);
+      --text: #f0ede8;
+      --muted: rgba(240,237,232,0.55);
+      --accent: #c8b8a2;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem 1.5rem 3rem;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 30%, rgba(80,60,40,0.35) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 80% at 20% 80%, rgba(40,30,20,0.4) 0%, transparent 60%),
+        linear-gradient(160deg, #1a1410 0%, #0a0a0a 60%, #111008 100%);
+      z-index: 0;
+    }
+
+    /* animated ink-wash blobs */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.18;
+      animation: drift 14s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+    .blob-1 { width: 420px; height: 420px; background: #6b5a3e; top: -80px; left: -100px; animation-delay: 0s; }
+    .blob-2 { width: 300px; height: 300px; background: #3a4a2a; bottom: 60px; right: -80px; animation-delay: -5s; }
+    .blob-3 { width: 200px; height: 200px; background: #4a3820; top: 50%; left: 50%; transform: translate(-50%,-50%); animation-delay: -9s; }
+
+    @keyframes drift {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(30px, 20px) scale(1.08); }
+    }
+
+    .hero-content { position: relative; z-index: 1; width: 100%; max-width: 480px; }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.6rem, 10vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 0.3rem;
+    }
+
+    .hero-sub {
+      font-size: 0.75rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2.2rem;
+    }
+
+    /* social icons row */
+    .social-row {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+      cursor: pointer;
+    }
+
+    .social-btn:hover, .social-btn:focus-visible {
+      background: var(--surface-hover);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      outline: none;
+    }
+
+    /* ── NAV CARDS ── */
+    .nav-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+      margin-bottom: 2rem;
+    }
+
+    .nav-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.4rem;
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 60%, rgba(200,184,162,0.07));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .nav-card:hover::before, .nav-card:focus-visible::before { opacity: 1; }
+
+    .nav-card:hover, .nav-card:focus-visible {
+      background: var(--surface-hover);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      outline: none;
+    }
+
+    .nav-card:active { transform: scale(0.98); }
+
+    .nav-card-label { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-style: italic; }
+    .nav-card-arrow { font-size: 0.85rem; color: var(--muted); }
+
+    /* ── SECTIONS ── */
+    .section {
+      display: none;
+      padding: 5rem 1.5rem 4rem;
+      max-width: 600px;
+      margin: 0 auto;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .section.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      cursor: pointer;
+      border: none;
+      background: none;
+      margin-bottom: 2.5rem;
+      padding: 0;
+      transition: opacity 0.2s;
+    }
+
+    .back-btn:hover { opacity: 0.7; }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 8vw, 3rem);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      line-height: 1.1;
+    }
+
+    .section-subtitle {
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2.5rem;
+    }
+
+    /* Officers */
+    .officers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .officer-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 1.6rem 1rem 1.3rem;
+      text-align: center;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .officer-card:hover { border-color: var(--accent); background: var(--surface-hover); }
+
+    .officer-avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3a3020, #6b5a3e);
+      border: 2px solid var(--border);
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--accent);
+      overflow: hidden;
+    }
+
+    .officer-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .officer-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      line-height: 1.3;
+    }
+
+    .officer-role {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.8;
+    }
+
+    .officer-card--tbd {
+      border-style: dashed;
+      opacity: 0.7;
+    }
+
+    .officer-avatar--tbd {
+      background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+      color: var(--muted);
+      font-style: italic;
+      font-size: 1.4rem;
+    }
+    .idea-form { display: flex; flex-direction: column; gap: 1rem; }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-field label {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .form-field input,
+    .form-field textarea {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      resize: vertical;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    .form-field input:focus,
+    .form-field textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .submit-btn {
+      background: var(--accent);
+      color: #0f0f0f;
+      border: none;
+      border-radius: 10px;
+      padding: 0.9rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-style: italic;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      margin-top: 0.5rem;
+    }
+
+    .submit-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .submit-btn:active { transform: scale(0.98); }
+
+    .success-msg {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+      border: 1.5px solid var(--accent);
+      border-radius: 14px;
+      background: rgba(200,184,162,0.06);
+    }
+
+    .success-msg.show { display: block; }
+    .success-msg p { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-style: italic; color: var(--accent); }
+
+    /* Calendar */
+    .cal-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.2rem;
+    }
+
+    .cal-nav-btn {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .cal-nav-btn:hover { background: var(--surface-hover); border-color: var(--accent); }
+    .cal-nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+    .calendar-month {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: var(--accent);
+      flex: 1;
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+      margin-bottom: 1.2rem;
+    }
+
+    .cal-day-label {
+      text-align: center;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.4rem 0;
+    }
+
+    .cal-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 0.8rem;
+      color: var(--muted);
+      cursor: default;
+      transition: background 0.15s, color 0.15s;
+      position: relative;
+    }
+
+    .cal-day.current-month { color: rgba(240,237,232,0.45); }
+    .cal-day.today { background: rgba(200,184,162,0.2); color: var(--accent); font-weight: 600; }
+    .cal-day.has-event {
+      color: #ffffff !important;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .cal-day.has-event:hover { background: rgba(200,184,162,0.25); }
+    .cal-day.selected { background: var(--accent) !important; color: #0f0f0f !important; font-weight: 700; }
+
+    /* event popup */
+    .event-popup {
+      display: none;
+      background: rgba(20,16,12,0.97);
+      border: 1.5px solid var(--accent);
+      border-radius: 14px;
+      padding: 1.1rem 1.2rem;
+      margin-bottom: 1.2rem;
+      animation: fadeUp 0.2s ease both;
+    }
+
+    .event-popup.show { display: block; }
+
+    .event-popup-date {
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .event-popup-list { display: flex; flex-direction: column; gap: 0.4rem; }
+
+    .event-popup-item {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--text);
+    }
+
+    .event-popup-time {
+      font-family: 'Inter', sans-serif;
+      font-style: normal;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.1rem;
+    }
+
+    .event-list { display: flex; flex-direction: column; gap: 0.7rem; }
+
+    .event-list-title {
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .event-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: 0.9rem 1rem;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .event-date-badge {
+      min-width: 44px;
+      text-align: center;
+      border-right: 1.5px solid var(--border);
+      padding-right: 1rem;
+    }
+
+    .event-date-day {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--accent);
+    }
+
+    .event-date-month {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .event-info { flex: 1; }
+    .event-name { font-family: 'Playfair Display', serif; font-size: 0.95rem; margin-bottom: 0.15rem; }
+    .event-time { font-size: 0.75rem; color: var(--muted); }
+
+    /* Photo Highlights */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.6rem;
+    }
+
+    .photo-card {
+      aspect-ratio: 4/3;
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      overflow: hidden;
+      position: relative;
+      background: var(--surface);
+      cursor: pointer;
+    }
+
+    .photo-card:first-child { grid-column: span 2; aspect-ratio: 16/9; }
+
+    .photo-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      color: var(--muted);
+      background: linear-gradient(135deg, rgba(40,30,20,0.8), rgba(20,20,20,0.9));
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .photo-placeholder svg { opacity: 0.35; }
+
+    .photo-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0.6rem 0.8rem;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+    }
+
+    /* gallery teaser on hero */
+    .gallery-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+    }
+
+    .gallery-label::before,
+    .gallery-label::after {
+      content: '';
+      display: block;
+      width: 30px;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .credit {
+      position: absolute;
+      bottom: 1rem;
+      right: 1.1rem;
+      font-size: 0.42rem;
+      letter-spacing: 0.04em;
+      color: rgba(240,237,232,0.13);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .blob { animation: none; }
+      .section { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HERO ── -->
+  <div id="home" class="hero">
+    <div class="hero-bg"></div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <span class="credit">By Elias</span>
+
+    <div class="hero-content">
+      <p class="hero-sub">LNAA · 2026–2027</p>
+      <h1>LNAA Student<br>Association</h1>
+
+      <div class="social-row" style="margin-top:1.6rem;">
+        <a class="social-btn" href="https://www.instagram.com/lnaa_lions?igsh=MWVzbGswc2Uxemh0YQ==" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
+          </svg>
+        </a>
+        <a class="social-btn" href="https://www.tiktok.com/@lnaa.lions?_r=1&_t=ZT-97DfLlPb4BB" target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/>
+          </svg>
+        </a>
+      </div>
+
+      <nav class="nav-cards">
+        <button class="nav-card" onclick="showSection('officers')">
+          <span class="nav-card-label">Meet your officers</span>
+          <span class="nav-card-arrow">→</span>
+        </button>
+        <button class="nav-card" onclick="showSection('suggest')">
+          <span class="nav-card-label">Suggest an idea</span>
+          <span class="nav-card-arrow">→</span>
+        </button>
+        <button class="nav-card" onclick="showSection('calendar')">
+          <span class="nav-card-label">Calendar</span>
+          <span class="nav-card-arrow">→</span>
+        </button>
+        <button class="nav-card" onclick="showSection('photos')">
+          <span class="nav-card-label">Photo highlights</span>
+          <span class="nav-card-arrow">→</span>
+        </button>
+      </nav>
+
+      <div class="gallery-label">All For God</div>
+    </div>
+  </div>
+
+  <!-- ── MEET YOUR OFFICERS ── -->
+  <section id="officers" class="section">
+    <button class="back-btn" onclick="showSection('home')">← Back</button>
+    <p class="section-subtitle">LNAA · 2026–2027</p>
+    <h2 class="section-title">Meet Your Officers</h2>
+
+    <p style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;">Executive Board</p>
+    <div class="officers-grid">
+      <div class="officer-card">
+        <div class="officer-avatar">I</div>
+        <div class="officer-name">Isabella Beabaurn</div>
+        <div class="officer-role">President</div>
+      </div>
+      <div class="officer-card">
+        <div class="officer-avatar">S</div>
+        <div class="officer-name">Sobrina Sterling</div>
+        <div class="officer-role">Vice President</div>
+      </div>
+      <div class="officer-card">
+        <div class="officer-avatar">N</div>
+        <div class="officer-name">Noah Gonie</div>
+        <div class="officer-role">Secretary</div>
+      </div>
+      <div class="officer-card">
+        <div class="officer-avatar">J</div>
+        <div class="officer-name">Jeffrey Mazariegos</div>
+        <div class="officer-role">Treasurer</div>
+      </div>
+      <div class="officer-card">
+        <div class="officer-avatar">G</div>
+        <div class="officer-name">Gianella Núñez</div>
+        <div class="officer-role">Events Coordinator</div>
+      </div>
+      <div class="officer-card">
+        <div class="officer-avatar">N</div>
+        <div class="officer-name">Nicole Kiage</div>
+        <div class="officer-role">Student Life</div>
+      </div>
+      <div class="officer-card">
+        <div class="officer-avatar">J</div>
+        <div class="officer-name">Jaslyn Valverde</div>
+        <div class="officer-role">Chaplain</div>
+      </div>
+      <div class="officer-card">
+        <div class="officer-avatar">L</div>
+        <div class="officer-name">Luciana Gonzales</div>
+        <div class="officer-role">Public Relations</div>
+      </div>
+    </div>
+
+    <p style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-top:2rem;margin-bottom:1rem;">Class Presidents</p>
+    <div class="officers-grid">
+      <div class="officer-card officer-card--tbd">
+        <div class="officer-avatar officer-avatar--tbd">?</div>
+        <div class="officer-name" style="color:var(--muted)">To Be Announced</div>
+        <div class="officer-role">Freshman President</div>
+      </div>
+      <div class="officer-card officer-card--tbd">
+        <div class="officer-avatar officer-avatar--tbd">?</div>
+        <div class="officer-name" style="color:var(--muted)">To Be Announced</div>
+        <div class="officer-role">Sophomore President</div>
+      </div>
+      <div class="officer-card officer-card--tbd">
+        <div class="officer-avatar officer-avatar--tbd">?</div>
+        <div class="officer-name" style="color:var(--muted)">To Be Announced</div>
+        <div class="officer-role">Junior President</div>
+      </div>
+      <div class="officer-card officer-card--tbd">
+        <div class="officer-avatar officer-avatar--tbd">?</div>
+        <div class="officer-name" style="color:var(--muted)">To Be Announced</div>
+        <div class="officer-role">Senior President</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SUGGEST AN IDEA ── -->
+  <section id="suggest" class="section">
+    <button class="back-btn" onclick="showSection('home')">← Back</button>
+    <p class="section-subtitle">Have a thought?</p>
+    <h2 class="section-title">Suggest an Idea</h2>
+    <div class="idea-form" id="ideaForm">
+      <div class="form-field">
+        <label>Your name</label>
+        <input type="text" id="fieldName" placeholder="First and last name" />
+      </div>
+      <div class="form-field">
+        <label>Your idea</label>
+        <textarea rows="5" id="fieldIdea" placeholder="Share your idea with us — events, resources, improvements…"></textarea>
+      </div>
+      <button class="submit-btn" onclick="submitIdea()">Submit idea →</button>
+    </div>
+    <div class="success-msg" id="successMsg">
+      <p>Thank you! We'll review your idea soon.</p>
+    </div>
+  </section>
+
+  <!-- ── CALENDAR ── -->
+  <section id="calendar" class="section">
+    <button class="back-btn" onclick="showSection('home')">← Back</button>
+    <p class="section-subtitle">What's coming up</p>
+    <h2 class="section-title">Calendar</h2>
+
+    <div class="cal-nav">
+      <button class="cal-nav-btn" id="calPrev" onclick="changeMonth(-1)">&#8592;</button>
+      <div class="calendar-month" id="calMonthLabel"></div>
+      <button class="cal-nav-btn" id="calNext" onclick="changeMonth(1)">&#8594;</button>
+    </div>
+
+    <div class="cal-grid" id="calGrid"></div>
+
+    <!-- Popup for tapped date -->
+    <div class="event-popup" id="eventPopup">
+      <div class="event-popup-date" id="popupDate"></div>
+      <div class="event-popup-list" id="popupList"></div>
+    </div>
+
+    <!-- Upcoming events (always visible) -->
+    <p class="event-list-title">Upcoming Events</p>
+    <div class="event-list">
+      <div class="event-item">
+        <div class="event-date-badge">
+          <div class="event-date-day">18</div>
+          <div class="event-date-month">Jun</div>
+        </div>
+        <div class="event-info">
+          <div class="event-name">General Assembly</div>
+          <div class="event-time">4:00 PM · Room 204</div>
+        </div>
+      </div>
+      <div class="event-item">
+        <div class="event-date-badge">
+          <div class="event-date-day">24</div>
+          <div class="event-date-month">Jun</div>
+        </div>
+        <div class="event-info">
+          <div class="event-name">End-of-Year Showcase</div>
+          <div class="event-time">6:00 PM · Main Hall</div>
+        </div>
+      </div>
+      <div class="event-item">
+        <div class="event-date-badge">
+          <div class="event-date-day">5</div>
+          <div class="event-date-month">Jul</div>
+        </div>
+        <div class="event-info">
+          <div class="event-name">Summer Welcome Social</div>
+          <div class="event-time">3:00 PM · Courtyard</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PHOTO HIGHLIGHTS ── -->
+  <section id="photos" class="section">
+    <button class="back-btn" onclick="showSection('home')">← Back</button>
+    <p class="section-subtitle">Memories</p>
+    <h2 class="section-title">Photo Highlights</h2>
+    <div class="photo-grid">
+      <div class="photo-card">
+        <div class="photo-placeholder">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/>
+          </svg>
+        </div>
+        <div class="photo-label">Spirit Week 2026</div>
+      </div>
+      <div class="photo-card">
+        <div class="photo-placeholder">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/>
+          </svg>
+        </div>
+        <div class="photo-label">Battle of the Classes 2025</div>
+      </div>
+      <div class="photo-card" style="grid-column:span 2; aspect-ratio: 16/7;">
+        <div class="photo-placeholder">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/>
+          </svg>
+        </div>
+        <div class="photo-label">HS Spiritual Retreat 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // ── Navigation ──
+    function showSection(id) {
+      const allSections = document.querySelectorAll('.section');
+      const hero = document.getElementById('home');
+
+      allSections.forEach(s => s.classList.remove('active'));
+      hero.style.display = '';
+
+      if (id === 'home') {
+        hero.style.display = '';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        hero.style.display = 'none';
+        const target = document.getElementById(id);
+        if (target) {
+          target.classList.add('active');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+    }
+
+    // ── Idea form ──
+    async function submitIdea() {
+      const name = document.getElementById('fieldName').value.trim();
+      const idea = document.getElementById('fieldIdea').value.trim();
+
+      if (!name || !idea) {
+        alert('Please fill in both fields before submitting.');
+        return;
+      }
+
+      const btn = document.querySelector('.submit-btn');
+      btn.textContent = 'Sending…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('https://formspree.io/f/mgobdjgo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ name, idea })
+        });
+
+        if (res.ok) {
+          document.getElementById('ideaForm').style.display = 'none';
+          document.getElementById('successMsg').classList.add('show');
+        } else {
+          alert('Something went wrong. Please try again.');
+          btn.textContent = 'Submit idea →';
+          btn.disabled = false;
+        }
+      } catch (e) {
+        alert('No internet connection. Please try again.');
+        btn.textContent = 'Submit idea →';
+        btn.disabled = false;
+      }
+    }
+
+    // ── Calendar ──
+    const CAL_START = { year: 2026, month: 7 }; // August 2026 (0-indexed)
+    const CAL_END   = { year: 2027, month: 5 }; // June 2027
+    let calCurrent  = { year: 2026, month: 7 };
+    let selectedDay = null;
+
+    // Events keyed as "YYYY-M-D" (month 0-indexed)
+    const EVENTS = {
+      '2026-7-18':  [{ name: 'General Assembly',      time: '4:00 PM · Room 204' }],
+      '2026-7-24':  [{ name: 'End-of-Year Showcase',  time: '6:00 PM · Main Hall' }],
+      '2026-8-5':   [{ name: 'Summer Welcome Social', time: '3:00 PM · Courtyard' }],
+    };
+
+    const MONTH_NAMES = ['January','February','March','April','May','June',
+                         'July','August','September','October','November','December'];
+    const DAY_LABELS  = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+    function calKey(year, month, day) {
+      return `${year}-${month}-${day}`;
+    }
+
+    function buildCalendar() {
+      const { year, month } = calCurrent;
+      const today = new Date();
+
+      document.getElementById('calMonthLabel').textContent =
+        `${MONTH_NAMES[month]} ${year}`;
+
+      // Prev / Next button state
+      const prevBtn = document.getElementById('calPrev');
+      const nextBtn = document.getElementById('calNext');
+      prevBtn.disabled = (year === CAL_START.year && month === CAL_START.month);
+      nextBtn.disabled = (year === CAL_END.year   && month === CAL_END.month);
+
+      const firstDay    = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      const grid = document.getElementById('calGrid');
+      grid.innerHTML = '';
+
+      // Day headers
+      DAY_LABELS.forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'cal-day-label';
+        el.textContent = d;
+        grid.appendChild(el);
+      });
+
+      // Empty leading cells
+      for (let i = 0; i < firstDay; i++) {
+        const el = document.createElement('div');
+        el.className = 'cal-day';
+        grid.appendChild(el);
+      }
+
+      // Day cells
+      for (let d = 1; d <= daysInMonth; d++) {
+        const el   = document.createElement('div');
+        const key  = calKey(year, month, d);
+        const isToday = (d === today.getDate() && month === today.getMonth() && year === today.getFullYear());
+        const hasEv   = !!EVENTS[key];
+
+        el.className = 'cal-day current-month';
+        if (isToday)  el.classList.add('today');
+        if (hasEv)    el.classList.add('has-event');
+        if (selectedDay && selectedDay.year === year && selectedDay.month === month && selectedDay.day === d) {
+          el.classList.add('selected');
+        }
+
+        el.textContent = d;
+
+        if (hasEv) {
+          el.addEventListener('click', () => tapDay(year, month, d, el));
+        } else {
+          el.addEventListener('click', () => clearPopup());
+        }
+
+        grid.appendChild(el);
+      }
+
+      // Re-render popup if selected day is on this month
+      if (selectedDay && selectedDay.year === year && selectedDay.month === month) {
+        showPopup(selectedDay.year, selectedDay.month, selectedDay.day);
+      } else {
+        clearPopup();
+      }
+    }
+
+    function tapDay(year, month, day, el) {
+      // Toggle off if tapping same day
+      if (selectedDay && selectedDay.year === year && selectedDay.month === month && selectedDay.day === day) {
+        selectedDay = null;
+        clearPopup();
+        buildCalendar();
+        return;
+      }
+      selectedDay = { year, month, day };
+      buildCalendar();
+      showPopup(year, month, day);
+    }
+
+    function showPopup(year, month, day) {
+      const key    = calKey(year, month, day);
+      const events = EVENTS[key] || [];
+      const popup  = document.getElementById('eventPopup');
+      const dateEl = document.getElementById('popupDate');
+      const listEl = document.getElementById('popupList');
+
+      dateEl.textContent = `${MONTH_NAMES[month]} ${day}, ${year}`;
+      listEl.innerHTML = events.map(e => `
+        <div class="event-popup-item">
+          ${e.name}
+          <div class="event-popup-time">${e.time}</div>
+        </div>
+      `).join('');
+
+      popup.classList.add('show');
+    }
+
+    function clearPopup() {
+      document.getElementById('eventPopup').classList.remove('show');
+    }
+
+    function changeMonth(dir) {
+      let { year, month } = calCurrent;
+      month += dir;
+      if (month > 11) { month = 0; year++; }
+      if (month < 0)  { month = 11; year--; }
+
+      // Clamp to school year range
+      if (year < CAL_START.year || (year === CAL_START.year && month < CAL_START.month)) return;
+      if (year > CAL_END.year   || (year === CAL_END.year   && month > CAL_END.month))   return;
+
+      selectedDay = null;
+      calCurrent  = { year, month };
+      buildCalendar();
+    }
+
+    buildCalendar();
+  </script>
+</body>
+</html>
