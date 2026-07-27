@@ -596,6 +596,151 @@
       .blob { animation: none; }
       .section { animation: none; }
     }
+
+    /* ── TABLET (≥ 640px) ── */
+    @media (min-width: 640px) {
+      .hero-content { max-width: 580px; }
+
+      .hero h1 { font-size: clamp(3rem, 8vw, 4.5rem); }
+
+      .nav-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.85rem;
+      }
+
+      .section {
+        max-width: 720px;
+        padding: 5rem 2.5rem 4rem;
+      }
+
+      .officers-grid { grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+
+      .officer-avatar { width: 100px; height: 100px; }
+
+      .photo-grid { gap: 0.8rem; }
+
+      .cal-grid { gap: 4px; }
+      .cal-day { font-size: 0.88rem; }
+    }
+
+    /* ── DESKTOP (≥ 1024px) ── */
+    @media (min-width: 1024px) {
+      /* Hero splits into left text + right nav */
+      .hero {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 6rem;
+        padding: 3rem 6rem;
+        text-align: left;
+      }
+
+      .hero-content {
+        max-width: 900px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem 5rem;
+        align-items: center;
+      }
+
+      /* Left column: brand */
+      .hero-sub { margin-bottom: 1rem; }
+
+      .hero h1 {
+        font-size: clamp(3.5rem, 5vw, 5.5rem);
+        margin-bottom: 0;
+      }
+
+      .social-row {
+        justify-content: flex-start;
+        margin-top: 1.8rem;
+        margin-bottom: 0;
+        grid-column: 1;
+      }
+
+      .gallery-label {
+        justify-content: flex-start;
+        grid-column: 1;
+        margin-top: 2rem;
+      }
+
+      /* Right column: nav cards */
+      .nav-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        grid-column: 2;
+        grid-row: 1 / span 3;
+        align-self: center;
+        margin-bottom: 0;
+      }
+
+      .nav-card { padding: 1.1rem 1.6rem; font-size: 1rem; }
+      .nav-card-label { font-size: 1.1rem; }
+
+      /* Sections: wider, two-column where applicable */
+      .section {
+        max-width: 1100px;
+        padding: 5rem 4rem 5rem;
+      }
+
+      .section-title { font-size: clamp(2.5rem, 4vw, 3.5rem); }
+
+      /* Officers: 4 per row on desktop */
+      .officers-grid { grid-template-columns: repeat(4, 1fr); gap: 1.4rem; }
+
+      .officer-avatar { width: 110px; height: 110px; }
+      .officer-name { font-size: 1rem; }
+
+      /* Idea form: two columns */
+      .idea-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.2rem;
+      }
+
+      .idea-form .form-field:last-of-type { grid-column: 1 / -1; }
+      .idea-form .submit-btn { grid-column: 1 / -1; }
+      .idea-form #successMsg { grid-column: 1 / -1; }
+
+      /* Calendar: side by side calendar + upcoming events */
+      .cal-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 2.5rem;
+        align-items: start;
+      }
+
+      /* Photo grid: richer layout */
+      .photo-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+      }
+
+      .photo-card:first-child {
+        grid-column: span 2;
+        aspect-ratio: 16/9;
+      }
+
+      .photo-card { aspect-ratio: 4/3; }
+
+      .photo-label { font-size: 0.78rem; padding: 0.7rem 1rem; }
+
+      /* Blobs bigger on desktop */
+      .blob-1 { width: 600px; height: 600px; }
+      .blob-2 { width: 450px; height: 450px; }
+      .blob-3 { width: 300px; height: 300px; }
+    }
+
+    /* ── WIDE DESKTOP (≥ 1400px) ── */
+    @media (min-width: 1400px) {
+      .hero { gap: 8rem; padding: 3rem 10rem; }
+      .hero-content { max-width: 1200px; gap: 3rem 8rem; }
+      .section { max-width: 1300px; padding: 5rem 6rem; }
+      .officers-grid { grid-template-columns: repeat(4, 1fr); gap: 1.8rem; }
+      .officer-avatar { width: 130px; height: 130px; }
+    }
   </style>
 </head>
 <body>
@@ -751,24 +896,30 @@
     <p class="section-subtitle">What's coming up</p>
     <h2 class="section-title">Calendar</h2>
 
-    <div class="cal-nav">
-      <button class="cal-nav-btn" id="calPrev" onclick="changeMonth(-1)">&#8592;</button>
-      <div class="calendar-month" id="calMonthLabel"></div>
-      <button class="cal-nav-btn" id="calNext" onclick="changeMonth(1)">&#8594;</button>
-    </div>
+    <div class="cal-wrapper">
+      <div>
+        <div class="cal-nav">
+          <button class="cal-nav-btn" id="calPrev" onclick="changeMonth(-1)">&#8592;</button>
+          <div class="calendar-month" id="calMonthLabel"></div>
+          <button class="cal-nav-btn" id="calNext" onclick="changeMonth(1)">&#8594;</button>
+        </div>
 
-    <div class="cal-grid" id="calGrid"></div>
+        <div class="cal-grid" id="calGrid"></div>
 
-    <!-- Popup for tapped date -->
-    <div class="event-popup" id="eventPopup">
-      <div class="event-popup-date" id="popupDate"></div>
-      <div class="event-popup-list" id="popupList"></div>
-    </div>
+        <!-- Popup for tapped date -->
+        <div class="event-popup" id="eventPopup">
+          <div class="event-popup-date" id="popupDate"></div>
+          <div class="event-popup-list" id="popupList"></div>
+        </div>
+      </div>
 
-    <!-- Upcoming events (always visible) -->
-    <p class="event-list-title">Upcoming Events</p>
-    <div class="event-list" id="eventList">
-      <p style="color:var(--muted); font-size:0.85rem;">Loading events…</p>
+      <div>
+        <!-- Upcoming events (always visible) -->
+        <p class="event-list-title">Upcoming Events</p>
+        <div class="event-list" id="eventList">
+          <p style="color:var(--muted); font-size:0.85rem;">Loading events…</p>
+        </div>
+      </div>
     </div>
   </section>
 
