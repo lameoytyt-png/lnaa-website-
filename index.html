@@ -439,15 +439,27 @@
     .cal-day.current-month { color: rgba(240,237,232,0.45); }
     .cal-day.today { background: rgba(200,184,162,0.2); color: var(--accent); font-weight: 600; }
     .cal-day.has-event {
-      background: var(--accent) !important;
+      background: none !important;
       color: #0a0f20 !important;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 0 8px rgba(212,168,67,0.4);
-      transform: scale(0.97);
+      position: relative;
     }
-    .cal-day.has-event:hover { background: var(--accent) !important; transform: scale(1.05); box-shadow: 0 0 14px rgba(212,168,67,0.6); }
-    .cal-day.selected { background: var(--accent) !important; color: #0a0f20 !important; font-weight: 700; box-shadow: 0 0 14px rgba(212,168,67,0.6); transform: scale(0.97); }
+    .cal-day.has-event::before {
+      content: '';
+      position: absolute;
+      inset: 8%;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(212,168,67,0.45);
+      z-index: 0;
+    }
+    .cal-day.has-event span, .cal-day.has-event {
+      position: relative;
+      z-index: 1;
+    }
+    .cal-day.has-event:hover::before { box-shadow: 0 0 14px rgba(212,168,67,0.7); inset: 5%; }
+    .cal-day.selected::before { box-shadow: 0 0 14px rgba(212,168,67,0.7); }
 
     /* event popup */
     .event-popup {
