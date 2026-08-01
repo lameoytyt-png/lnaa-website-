@@ -528,6 +528,8 @@
       cursor: pointer;
     }
 
+    .photo-card img { pointer-events: none; }
+
     .photo-card:first-child { grid-column: span 2; aspect-ratio: 16/9; }
 
     .photo-placeholder {
@@ -747,31 +749,101 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.92);
+      background: rgba(0,0,0,0);
       z-index: 1000;
       align-items: center;
       justify-content: center;
       cursor: zoom-out;
+      transition: background 0.35s ease;
     }
-    .lightbox-overlay.show { display: flex; }
+    .lightbox-overlay.show {
+      display: flex;
+      background: rgba(0,0,0,0);
+      animation: lbFadeIn 0.35s ease forwards;
+    }
+    .lightbox-overlay.closing {
+      animation: lbFadeOut 0.3s ease forwards;
+    }
+    @keyframes lbFadeIn {
+      from { background: rgba(0,0,0,0); }
+      to   { background: rgba(0,0,0,0.92); }
+    }
+    @keyframes lbFadeOut {
+      from { background: rgba(0,0,0,0.92); }
+      to   { background: rgba(0,0,0,0); }
+    }
     .lightbox-img {
       max-width: 92vw;
       max-height: 88vh;
       border-radius: 10px;
       object-fit: contain;
       box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      opacity: 0;
+      transform: scale(0.94);
+      transition: opacity 0.35s ease, transform 0.35s ease;
     }
+    .lightbox-overlay.show .lightbox-img {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .lightbox-img.slide-left {
+      animation: slideLeft 0.3s ease forwards;
+    }
+    .lightbox-img.slide-right {
+      animation: slideRight 0.3s ease forwards;
+    }
+    .lightbox-img.enter-left {
+      animation: enterLeft 0.3s ease forwards;
+    }
+    .lightbox-img.enter-right {
+      animation: enterRight 0.3s ease forwards;
+    }
+    @keyframes slideLeft  { to { opacity:0; transform: translateX(-60px) scale(0.95); } }
+    @keyframes slideRight { to { opacity:0; transform: translateX(60px) scale(0.95); } }
+    @keyframes enterLeft  { from { opacity:0; transform: translateX(60px) scale(0.95); } to { opacity:1; transform: translateX(0) scale(1); } }
+    @keyframes enterRight { from { opacity:0; transform: translateX(-60px) scale(0.95); } to { opacity:1; transform: translateX(0) scale(1); } }
     .lightbox-close {
       position: absolute;
       top: 1.2rem;
       right: 1.4rem;
-      background: none;
+      background: rgba(0,0,0,0.4);
       border: none;
-      color: rgba(255,255,255,0.8);
-      font-size: 2rem;
+      border-radius: 50%;
+      width: 2.4rem;
+      height: 2.4rem;
+      color: rgba(255,255,255,0.9);
+      font-size: 1.2rem;
       cursor: pointer;
       line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(6px);
+      transition: background 0.2s;
     }
+    .lightbox-close:hover { background: rgba(255,255,255,0.15); }
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.4);
+      border: none;
+      border-radius: 50%;
+      width: 2.8rem;
+      height: 2.8rem;
+      color: rgba(255,255,255,0.9);
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(6px);
+      transition: background 0.2s, transform 0.2s;
+      z-index: 10;
+    }
+    .lightbox-nav:hover { background: rgba(255,255,255,0.2); transform: translateY(-50%) scale(1.1); }
+    .lightbox-prev { left: 1.2rem; }
+    .lightbox-next { right: 1.2rem; }
     .lightbox-label {
       position: absolute;
       bottom: 1.5rem;
@@ -779,9 +851,18 @@
       right: 0;
       text-align: center;
       color: rgba(255,255,255,0.7);
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
+    }
+    .lightbox-counter {
+      position: absolute;
+      top: 1.2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.5);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
     }
   </style>
 </head>
@@ -1001,6 +1082,16 @@
     </div>
   </section>
 
+
+  <!-- Lightbox -->
+  <div class="lightbox-overlay" id="lightbox" onclick="handleLightboxClick(event)">
+    <button class="lightbox-close" onclick="closeLightbox(event)">✕</button>
+    <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1, event)">&#8592;</button>
+    <img class="lightbox-img" id="lightboxImg" src="" alt="">
+    <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1, event)">&#8594;</button>
+    <div class="lightbox-label" id="lightboxLabel"></div>
+    <div class="lightbox-counter" id="lightboxCounter"></div>
+  </div>
   <script>
     // ── Navigation ──
     function showSection(id, pushState = true) {
@@ -1395,28 +1486,114 @@
     loadEventsFromGoogleCalendar();
 
     // ── Photo lightbox ──
+    let lbPhotos = [];
+    let lbIndex  = 0;
+    let lbTouchStartX = 0;
+    let lbAnimating = false;
+
+    function buildPhotoList() {
+      lbPhotos = [];
+      document.querySelectorAll('.photo-card img').forEach((img, i) => {
+        const label = img.closest('.photo-card').querySelector('.photo-label');
+        lbPhotos.push({ src: img.src, label: label ? label.textContent : '' });
+      });
+    }
+
     function openLightbox(src, label) {
-      document.getElementById('lightboxImg').src = src;
+      buildPhotoList();
+      lbIndex = lbPhotos.findIndex(p => p.src === src);
+      if (lbIndex === -1) lbIndex = 0;
+      const overlay = document.getElementById('lightbox');
+      const img = document.getElementById('lightboxImg');
+      img.src = src;
+      img.style.opacity = '0';
+      img.style.transform = 'scale(0.94)';
       document.getElementById('lightboxLabel').textContent = label;
-      document.getElementById('lightbox').classList.add('show');
+      updateCounter();
+      overlay.classList.remove('closing');
+      overlay.classList.add('show');
       document.body.style.overflow = 'hidden';
+      // Trigger image transition after overlay shows
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          img.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+          img.style.opacity = '1';
+          img.style.transform = 'scale(1)';
+        });
+      });
     }
 
-    function closeLightbox() {
-      document.getElementById('lightbox').classList.remove('show');
-      document.body.style.overflow = '';
+    function closeLightbox(e) {
+      if (e) e.stopPropagation();
+      if (lbAnimating) return;
+      const overlay = document.getElementById('lightbox');
+      overlay.classList.add('closing');
+      overlay.classList.remove('show');
+      setTimeout(() => {
+        overlay.classList.remove('closing');
+        document.body.style.overflow = '';
+      }, 300);
     }
 
+    function handleLightboxClick(e) {
+      if (e.target === document.getElementById('lightbox')) closeLightbox(e);
+    }
+
+    function updateCounter() {
+      document.getElementById('lightboxCounter').textContent =
+        lbPhotos.length > 1 ? `${lbIndex + 1} / ${lbPhotos.length}` : '';
+    }
+
+    function navigateLightbox(dir, e) {
+      if (e) e.stopPropagation();
+      if (lbAnimating || lbPhotos.length < 2) return;
+      lbAnimating = true;
+      const img = document.getElementById('lightboxImg');
+
+      // Slide out current
+      const outClass = dir === 1 ? 'slide-left' : 'slide-right';
+      img.style.transition = 'none';
+      img.classList.add(outClass);
+
+      setTimeout(() => {
+        img.classList.remove(outClass);
+        lbIndex = (lbIndex + dir + lbPhotos.length) % lbPhotos.length;
+        const next = lbPhotos[lbIndex];
+        img.src = next.src;
+        img.style.opacity = '0';
+        img.style.transform = dir === 1 ? 'translateX(60px) scale(0.95)' : 'translateX(-60px) scale(0.95)';
+        document.getElementById('lightboxLabel').textContent = next.label;
+        updateCounter();
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            img.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            img.style.opacity = '1';
+            img.style.transform = 'translateX(0) scale(1)';
+            setTimeout(() => { lbAnimating = false; }, 320);
+          });
+        });
+      }, 280);
+    }
+
+    // Keyboard navigation
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeLightbox();
+      const lb = document.getElementById('lightbox');
+      if (!lb.classList.contains('show')) return;
+      if (e.key === 'Escape')      closeLightbox();
+      if (e.key === 'ArrowRight')  navigateLightbox(1);
+      if (e.key === 'ArrowLeft')   navigateLightbox(-1);
     });
-  </script>
 
-  <!-- Lightbox -->
-  <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
-    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
-    <img class="lightbox-img" id="lightboxImg" src="" alt="">
-    <div class="lightbox-label" id="lightboxLabel"></div>
-  </div>
+    // Touch / swipe support
+    document.getElementById('lightbox').addEventListener('touchstart', e => {
+      lbTouchStartX = e.touches[0].clientX;
+    }, { passive: true });
+
+    document.getElementById('lightbox').addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - lbTouchStartX;
+      if (Math.abs(dx) > 50) navigateLightbox(dx < 0 ? 1 : -1);
+    }, { passive: true });
+  </script>
 </body>
 </html>
