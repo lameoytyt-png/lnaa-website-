@@ -1169,13 +1169,15 @@
     });
 
     // Restore last section on page load/refresh
-    const _savedSection = localStorage.getItem('lnaa_section');
-    const _hashSection = window.location.hash.replace('#', '');
-    const _startSection = _hashSection || _savedSection || 'home';
-    history.replaceState({ section: _startSection }, '', _startSection === 'home' ? '#' : '#' + _startSection);
-    if (_startSection !== 'home') {
-      showSection(_startSection, false);
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+      const _savedSection = localStorage.getItem('lnaa_section');
+      const _hashSection = window.location.hash.replace('#', '');
+      const _startSection = _hashSection || _savedSection || 'home';
+      history.replaceState({ section: _startSection }, '', _startSection === 'home' ? '#' : '#' + _startSection);
+      if (_startSection && _startSection !== 'home') {
+        showSection(_startSection, false);
+      }
+    });
 
     // ── Idea form (submits silently to Google Forms) ──
     const GFORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSdox60DkfpgtMBCId1lEGoKmLqCtQmX8y5FBRIx3mjx2JCUzQ/formResponse';
