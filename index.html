@@ -825,10 +825,10 @@
     .lightbox-img.enter-right {
       animation: enterRight 0.3s ease forwards;
     }
-    @keyframes slideLeft  { to { opacity:0; transform: translateX(-60px) scale(0.95); } }
-    @keyframes slideRight { to { opacity:0; transform: translateX(60px) scale(0.95); } }
-    @keyframes enterLeft  { from { opacity:0; transform: translateX(60px) scale(0.95); } to { opacity:1; transform: translateX(0) scale(1); } }
-    @keyframes enterRight { from { opacity:0; transform: translateX(-60px) scale(0.95); } to { opacity:1; transform: translateX(0) scale(1); } }
+    @keyframes slideLeft  { to { opacity:0; transform: translateX(-40px) scale(0.97); } }
+    @keyframes slideRight { to { opacity:0; transform: translateX(40px) scale(0.97); } }
+    @keyframes enterLeft  { from { opacity:0; transform: translateX(40px) scale(0.97); } to { opacity:1; transform: translateX(0) scale(1); } }
+    @keyframes enterRight { from { opacity:0; transform: translateX(-40px) scale(0.97); } to { opacity:1; transform: translateX(0) scale(1); } }
     .lightbox-close {
       position: absolute;
       top: 1.2rem;
@@ -1113,9 +1113,7 @@
   <!-- Lightbox -->
   <div class="lightbox-overlay" id="lightbox" onclick="handleLightboxClick(event)">
     <button class="lightbox-close" onclick="closeLightbox(event)">✕</button>
-    <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1, event)">&#8592;</button>
     <img class="lightbox-img" id="lightboxImg" src="" alt="">
-    <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1, event)">&#8594;</button>
     <div class="lightbox-label" id="lightboxLabel"></div>
     <div class="lightbox-counter" id="lightboxCounter"></div>
   </div>
@@ -1608,19 +1606,19 @@
         const next = lbPhotos[lbIndex];
         img.src = next.src;
         img.style.opacity = '0';
-        img.style.transform = dir === 1 ? 'translateX(60px) scale(0.95)' : 'translateX(-60px) scale(0.95)';
+        img.style.transform = dir === 1 ? 'translateX(40px) scale(0.97)' : 'translateX(-40px) scale(0.97)';
         document.getElementById('lightboxLabel').textContent = next.label;
         updateCounter();
 
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
-            img.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            img.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
             img.style.opacity = '1';
             img.style.transform = 'translateX(0) scale(1)';
-            setTimeout(() => { lbAnimating = false; }, 320);
+            setTimeout(() => { lbAnimating = false; }, 190);
           });
         });
-      }, 280);
+      }, 160);
     }
 
     // Keyboard navigation
