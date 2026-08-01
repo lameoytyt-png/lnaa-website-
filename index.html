@@ -410,7 +410,7 @@
     .cal-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 3px;
+      gap: 5px;
       margin-bottom: 1.2rem;
     }
 
@@ -429,7 +429,7 @@
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      font-size: 0.8rem;
+      font-size: 0.92rem;
       color: var(--muted);
       cursor: default;
       transition: background 0.15s, color 0.15s;
@@ -1142,8 +1142,7 @@
           });
         }, 120);
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        if (pushState) history.pushState({ section: 'home' }, '', '#');
-        sessionStorage.setItem('lnaa_section', 'home');
+        if (pushState) history.pushState({ section: 'home' }, '', window.location.pathname);
       } else {
         hero.style.display = 'none';
         allSections.forEach(s => s.classList.remove('active'));
@@ -1156,16 +1155,15 @@
               target.classList.add('visible');
             });
           });
-          if (pushState) history.pushState({ section: id }, '', '#' + id);
-          sessionStorage.setItem('lnaa_section', id);
+          if (pushState) history.pushState({ section: id }, '', window.location.pathname + '#' + id);
         }
       }
     }
 
-    // Handle browser back/forward buttons
+    // Handle browser back/forward
     window.addEventListener('popstate', function(e) {
-      const section = (e.state && e.state.section) ? e.state.section : 'home';
-      showSection(section, false);
+      const hash = window.location.hash.replace('#', '');
+      showSection(hash || 'home', false);
     });
 
     // ── Idea form (submits silently to Google Forms) ──
@@ -1659,16 +1657,12 @@
       if (Math.abs(dx) > 50) navigateLightbox(dx < 0 ? 1 : -1);
     }, { passive: true });
 
-    // ── Restore section on refresh ──
+    // ── Restore section from URL hash on load/refresh ──
     (function() {
-      try {
-        const saved = sessionStorage.getItem('lnaa_section');
-        const hash  = window.location.hash.replace('#', '');
-        const target = hash || saved;
-        if (target && target !== 'home' && document.getElementById(target)) {
-          showSection(target, false);
-        }
-      } catch(e) {}
+      const hash = window.location.hash.replace('#', '');
+      if (hash && document.getElementById(hash)) {
+        showSection(hash, false);
+      }
     })();
   </script>
 </body>
