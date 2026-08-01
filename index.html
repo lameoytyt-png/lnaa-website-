@@ -439,27 +439,14 @@
     .cal-day.current-month { color: rgba(240,237,232,0.45); }
     .cal-day.today { background: rgba(200,184,162,0.2); color: var(--accent); font-weight: 600; }
     .cal-day.has-event {
-      background: none !important;
+      background: var(--accent) !important;
       color: #0a0f20 !important;
       font-weight: 700;
       cursor: pointer;
-      position: relative;
+      box-shadow: 0 0 10px rgba(212,168,67,0.5);
     }
-    .cal-day.has-event::before {
-      content: '';
-      position: absolute;
-      inset: 8%;
-      background: var(--accent);
-      border-radius: 50%;
-      box-shadow: 0 0 8px rgba(212,168,67,0.45);
-      z-index: 0;
-    }
-    .cal-day.has-event span, .cal-day.has-event {
-      position: relative;
-      z-index: 1;
-    }
-    .cal-day.has-event:hover::before { box-shadow: 0 0 14px rgba(212,168,67,0.7); inset: 5%; }
-    .cal-day.selected::before { box-shadow: 0 0 14px rgba(212,168,67,0.7); }
+    .cal-day.has-event:hover { box-shadow: 0 0 16px rgba(212,168,67,0.75); }
+    .cal-day.selected { background: var(--accent) !important; color: #0a0f20 !important; font-weight: 700; }
 
     /* event popup */
     .event-popup {
@@ -1140,10 +1127,7 @@
       const allSections = document.querySelectorAll('.section');
       const hero = document.getElementById('home');
 
-      // Fade out current active section first
-      allSections.forEach(s => {
-        s.classList.remove('visible');
-      });
+      allSections.forEach(s => s.classList.remove('visible'));
 
       if (id === 'home') {
         setTimeout(() => {
@@ -1159,6 +1143,7 @@
         }, 120);
         window.scrollTo({ top: 0, behavior: 'smooth' });
         if (pushState) history.pushState({ section: 'home' }, '', '#');
+        localStorage.setItem('lnaa_section', 'home');
       } else {
         hero.style.display = 'none';
         allSections.forEach(s => s.classList.remove('active'));
@@ -1166,13 +1151,13 @@
         if (target) {
           target.classList.add('active');
           window.scrollTo({ top: 0, behavior: 'smooth' });
-          // Trigger smooth fade-in after display:block is applied
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
               target.classList.add('visible');
             });
           });
           if (pushState) history.pushState({ section: id }, '', '#' + id);
+          localStorage.setItem('lnaa_section', id);
         }
       }
     }
@@ -1183,8 +1168,14 @@
       showSection(section, false);
     });
 
-    // Set initial history state
-    history.replaceState({ section: 'home' }, '', '#');
+    // Restore last section on page load/refresh
+    const _savedSection = localStorage.getItem('lnaa_section');
+    const _hashSection = window.location.hash.replace('#', '');
+    const _startSection = _hashSection || _savedSection || 'home';
+    history.replaceState({ section: _startSection }, '', _startSection === 'home' ? '#' : '#' + _startSection);
+    if (_startSection !== 'home') {
+      showSection(_startSection, false);
+    }
 
     // ── Idea form (submits silently to Google Forms) ──
     const GFORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSdox60DkfpgtMBCId1lEGoKmLqCtQmX8y5FBRIx3mjx2JCUzQ/formResponse';
