@@ -1532,6 +1532,26 @@
 
     loadEventsFromGoogleCalendar();
 
+    // ── Officer card touch highlight (fixes mobile :hover limitation) ──
+    document.querySelectorAll('.officer-card').forEach(card => {
+      card.addEventListener('touchstart', () => {
+        card.style.borderColor = 'var(--accent)';
+        card.style.background = 'var(--surface-hover)';
+      }, { passive: true });
+
+      card.addEventListener('touchend', () => {
+        setTimeout(() => {
+          card.style.borderColor = '';
+          card.style.background = '';
+        }, 300);
+      }, { passive: true });
+
+      card.addEventListener('touchcancel', () => {
+        card.style.borderColor = '';
+        card.style.background = '';
+      }, { passive: true });
+    });
+
     // ── Photo lightbox ──
     let lbPhotos = [];
     let lbIndex  = 0;
