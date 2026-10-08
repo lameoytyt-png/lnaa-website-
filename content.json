@@ -1,0 +1,43 @@
+{
+  "theme": {
+    "primaryColor": "#1d4ed8"
+  },
+  "general": {
+    "title": "LNAA Student Association",
+    "subtitle": "Representing every student, every day",
+    "year": "2026–2027",
+    "motto": "One Voice, One LNAA"
+  },
+  "officers": [
+    {
+      "name": "Jane Doe",
+      "role": "President",
+      "category": "Executive Board",
+      "photo": "/images/officers/placeholder.jpg"
+    },
+    {
+      "name": "John Smith",
+      "role": "Vice President",
+      "category": "Executive Board",
+      "photo": "/images/officers/placeholder.jpg"
+    },
+    {
+      "name": "To Be Announced",
+      "role": "Freshman President",
+      "category": "Class Presidents",
+      "photo": ""
+    }
+  ],
+  "gallery": [
+    {
+      "src": "/images/gallery/placeholder1.jpg",
+      "title": "Fall Kickoff Meeting",
+      "tag": "Meetings"
+    },
+    {
+      "src": "/images/gallery/placeholder2.jpg",
+      "title": "Spirit Week",
+      "tag": "Events"
+    }
+  ]
+}

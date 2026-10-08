@@ -1,0 +1,78 @@
+# Pages CMS configuration — https://pagescms.org
+# This tells Pages CMS where uploaded photos go, and exactly which
+# fields editors see when they open content.json in the dashboard.
+
+media: images
+
+content:
+  - name: site
+    label: "Site Content"
+    type: file
+    path: content.json
+    format: json
+    fields:
+      # ── Theme ──────────────────────────────────────────────
+      - name: theme
+        label: "Theme"
+        type: object
+        fields:
+          - name: primaryColor
+            label: "Primary Color (hex code, e.g. #1d4ed8)"
+            type: string
+
+      # ── General site text ──────────────────────────────────
+      - name: general
+        label: "General Text"
+        type: object
+        fields:
+          - name: title
+            label: "Site Title"
+            type: string
+          - name: subtitle
+            label: "Subtitle"
+            type: string
+          - name: year
+            label: "School Year"
+            type: string
+          - name: motto
+            label: "Motto"
+            type: string
+
+      # ── Student officer profiles (repeatable) ──────────────
+      - name: officers
+        label: "Student Officers"
+        type: object
+        list:
+          collapsible:
+            summary: "{fields.role} — {fields.name}"
+        fields:
+          - name: name
+            label: "Name"
+            type: string
+          - name: role
+            label: "Role (e.g. President, Treasurer)"
+            type: string
+          - name: category
+            label: "Category (e.g. Executive Board, Class Presidents)"
+            type: string
+          - name: photo
+            label: "Photo"
+            type: image
+
+      # ── Photo gallery (repeatable) ──────────────────────────
+      - name: gallery
+        label: "Photo Highlights"
+        type: object
+        list:
+          collapsible:
+            summary: "{fields.title}"
+        fields:
+          - name: src
+            label: "Image"
+            type: image
+          - name: title
+            label: "Title"
+            type: string
+          - name: tag
+            label: "Event Tag"
+            type: string
