@@ -1,97 +1,12 @@
-
-  "theme": {
-    "primaryColor": "#1d4ed8"
-  },
+{
+  "theme": { "primaryColor": "#1d4ed8" },
   "general": {
     "title": "LNAA Student Association",
     "subtitle": "Representing every student, every day",
     "year": "2026–2027",
     "motto": "One Voice, One LNAA"
   },
-  "officers": [
-    {
-      "name": "Isabella Beaubrun",
-      "role": "President",
-      "category": "Executive Board",
-      "photo": "/images/officers/isabella-beaubrun.jpg"
-    },
-    {
-      "name": "Sobrina Sterling",
-      "role": "Vice President",
-      "category": "Executive Board",
-      "photo": "/images/officers/sobrina-sterling.jpg"
-    },
-    {
-      "name": "Noah Gonie",
-      "role": "Secretary",
-      "category": "Executive Board",
-      "photo": "/images/officers/noah-gonie.jpg"
-    },
-    {
-      "name": "Jeffrey Mazariegos",
-      "role": "Treasurer",
-      "category": "Executive Board",
-      "photo": "/images/officers/jeffrey-mazariegos.jpg"
-    },
-    {
-      "name": "Gianella Núñez",
-      "role": "Events Coordinator",
-      "category": "Executive Board",
-      "photo": "/images/officers/gianella-n-ez.jpg"
-    },
-    {
-      "name": "Nicole Kiage",
-      "role": "Student Life",
-      "category": "Executive Board",
-      "photo": "/images/officers/nicole-kiage.jpg"
-    },
-    {
-      "name": "Jaslyn Valverde",
-      "role": "Chaplain",
-      "category": "Executive Board",
-      "photo": "/images/officers/jaslyn-valverde.jpg"
-    },
-    {
-      "name": "Luciana Gonzales",
-      "role": "Public Relations",
-      "category": "Executive Board",
-      "photo": "/images/officers/luciana-gonzales.jpg"
-    },
-    {
-      "name": "To Be Announced",
-      "role": "Freshman President",
-      "category": "Class Presidents",
-      "photo": ""
-    },
-    {
-      "name": "Danyella Noel",
-      "role": "Sophomore President",
-      "category": "Class Presidents",
-      "photo": "/images/officers/danyella-noel.jpg"
-    },
-    {
-      "name": "Gianna Darko",
-      "role": "Junior President",
-      "category": "Class Presidents",
-      "photo": "/images/officers/gianna-darko.jpg"
-    },
-    {
-      "name": "Rachel Njuguna",
-      "role": "Senior President",
-      "category": "Class Presidents",
-      "photo": "/images/officers/rachel-njuguna.jpg"
-    }
-  ],
-  "gallery": [
-    {
-      "src": "/images/gallery/placeholder1.jpg",
-      "title": "Fall Kickoff Meeting",
-      "tag": "Meetings"
-    },
-    {
-      "src": "/images/gallery/placeholder2.jpg",
-      "title": "Spirit Week",
-      "tag": "Events"
-    }
-  ]
+  "officers": [],
+  "gallery": []
 }
+
