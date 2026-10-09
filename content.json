@@ -1,12 +1,73 @@
 {
-  "theme": { "primaryColor": "#1d4ed8" },
+  "theme": {
+    "primaryColor": "#1d4ed8"
+  },
   "general": {
     "title": "LNAA Student Association",
     "subtitle": "Representing every student, every day",
     "year": "2026–2027",
     "motto": "One Voice, One LNAA"
   },
-  "officers": [],
-  "gallery": []
+  "officers": [
+    {
+      "name": "Isabella",
+      "role": "President ",
+      "category": "Executive Board"
+    },
+    {
+      "name": "Sobrina",
+      "role": "Vice President ",
+      "category": "Executive Board"
+    },
+    {
+      "name": "Noah",
+      "role": "Secretary",
+      "category": "Executive Board"
+    },
+    {
+      "name": "Jeffrey",
+      "role": "Treasurer ",
+      "category": "Executive Board"
+    },
+    {
+      "name": "Gianella",
+      "role": "Events coordinator ",
+      "category": "Executive Board"
+    },
+    {
+      "name": "Nicole",
+      "role": "Student life",
+      "category": "Executive Board"
+    },
+    {
+      "name": "Jaslyn",
+      "role": "Chaplain",
+      "category": "Executive Board"
+    },
+    {
+      "name": "Luciana ",
+      "role": "Public relations",
+      "category": "Executive Board"
+    },
+    {
+      "name": "Mia",
+      "role": "Freshman president ",
+      "category": "Class Presidents"
+    },
+    {
+      "name": "Danyella",
+      "role": "Sophomore president",
+      "category": "Class Presidents"
+    },
+    {
+      "name": "Gianna",
+      "role": "Junior president ",
+      "category": "Class Presidents"
+    },
+    {
+      "name": "Rachel",
+      "role": "Senior president",
+      "category": "Class Presidents"
+    }
+  ]
 }
-
