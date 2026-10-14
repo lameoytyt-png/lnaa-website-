@@ -16,7 +16,7 @@
       "photo": "/images/officers/isabella-beaubrun.jpg"
     },
     {
-      "name": "Sobrina Sterling",
+      "name": "Sob Sterling",
       "role": "Vice President",
       "category": "Executive Board",
       "photo": "/images/officers/sobrina-sterling.jpg"
@@ -28,7 +28,7 @@
       "photo": "/images/officers/noah-gonie.jpg"
     },
     {
-      "name": "Jeffrey Mazariegos",
+      "name": "Jeff Mazariegos",
       "role": "Treasurer",
       "category": "Executive Board",
       "photo": "/images/officers/jeffrey-mazariegos.jpg"
@@ -60,8 +60,7 @@
     {
       "name": "To Be Announced",
       "role": "Freshman President",
-      "category": "Class Presidents",
-      "photo": ""
+      "category": "Class Presidents"
     },
     {
       "name": "Danyella Noel",
